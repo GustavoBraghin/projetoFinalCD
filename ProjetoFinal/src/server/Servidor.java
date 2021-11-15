@@ -5,22 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
-/*OBJETIVOS DO SERVIDOR:
-JUIZ DO JOGO
-
-SABE QUANTOS PARTICIPANTES TEM (OK)
-SABE QUANTOS PALITOS CADA PARTICIPANTE TEM (OK)
-SABE QUANTOS PALITOS O PARTICIPANTE COLOCOU NA RODADA (OK)
-VERIFICAR SE ALGUM PARTICIPANTE ACERTOU (OK)
-
-ENVIAR A RESPOSTA NO CHAT (OK)
-
-REFINAMENTOS:
-
-- ARRUMAR OS SYSTEM OUT DA CLASSE PARA APARECER APENAS O NECESSÁRIO
-- MELHORAR MENSAGENS DE INICIO DO JOGOS, INICIO DE NOVA RODADA, FINAL DO JOGO, ETC
-- CRIAR FUNCOES PARA DEIXAR O CÓDIGO MAIS ORGANIZADO
+/*
+ ALUNOS:
+ GUSTAVO DA SILVA BRAGHIN
+ GIOVANA PINHO DE SOUZA
  */
+
 public class Servidor {
 
 	public static void main(String[] args) {
@@ -40,7 +30,7 @@ public class Servidor {
 			List<String> nomeCliente = new ArrayList<String>();
 
 			while(true) {
-				System.out.println("Servidor UDP pronto.");
+				System.out.println("Servidor UDP pronto.\n");
 
 				//RECEBE MENSAGEM DO CLIENTE
 				socket.receive(dgEntrada);
@@ -68,9 +58,8 @@ public class Servidor {
 					//RECEBE NOME DO CLIENTE 
 					socket.receive(dgEntrada);
 					mensagem = (new String(entrada)).trim().split("#")[0];
-					System.out.println("Nome do cliente recebido -> " + mensagem);
+					System.out.println("Nome do cliente recebido -> " + mensagem + "\n");
 					nomeCliente.add(mensagem);
-					System.out.println("Nome do cliente no vetor -> " + nomeCliente.get(qtdParticipantes));
 					qtdParticipantes++;
 
 				} else {
@@ -85,7 +74,7 @@ public class Servidor {
 							saida = mensagem.getBytes();
 							Servidor.enviarMensagemTodos(saida, saidas, socket);
 
-							mensagem = new String("Vamos começar#");
+							mensagem = new String("Vamos começar!#");
 							saida = mensagem.getBytes();
 							System.out.println("START GAME");
 							isStart = true;
@@ -110,7 +99,7 @@ public class Servidor {
 							for(DatagramPacket sai : saidas) {
 
 								//ENVIA MENSAGEM PARA TODOS
-								mensagem = (nomeCliente.get(i) + ", Digite quantos palitos colocara na rodada:#");
+								mensagem = (nomeCliente.get(i) + ", Digite quantos palitos colocará na rodada:#");
 								saida = mensagem.getBytes();
 								Servidor.enviarMensagemTodos(saida, saidas, socket);
 
@@ -125,6 +114,15 @@ public class Servidor {
 									} catch (NumberFormatException e){
 										mensagem = "-1";
 									}
+
+									if(!mensagem.equals("0") && !mensagem.equals("1") && 
+											!mensagem.equals("2") && !mensagem.equals("3") && dgEntrada.getPort() == sai.getPort()) {
+
+										String m = "Número deve ser entre 0 e 3...#";
+										saida = m.getBytes();
+										Servidor.enviarMensagemIndividual(saida, sai, socket);
+									}
+
 								}while (!mensagem.equals("0") && !mensagem.equals("1") && 
 										!mensagem.equals("2") && !mensagem.equals("3") || dgEntrada.getPort() != sai.getPort());
 
@@ -165,6 +163,13 @@ public class Servidor {
 										qtdPalitos = Integer.parseInt(mensagem);
 									} catch (NumberFormatException e){
 										mensagem = "-1";
+									}
+									
+									if(mensagem.equals("-1") && dgEntrada.getPort() == sai.getPort()) {
+
+										String m = "É necessário digitar um número...#";
+										saida = m.getBytes();
+										Servidor.enviarMensagemIndividual(saida, sai, socket);
 									}
 
 									System.out.println("Mensagem Recebida -> " + mensagem );
@@ -224,7 +229,10 @@ public class Servidor {
 							palpites.removeAll(palpites);
 
 						}while(!verificaVencedor);
-
+						
+						for(int x=0; x<qtdParticipantes; x++) {
+							qtdPalitosParticipante.add(3);
+						}
 
 						//SE NÃO TIVER RECEBIDO O START, APENAS ENVIA A MENSAGEM RECEBIDA PARA TODOS
 					}else {
@@ -247,20 +255,20 @@ public class Servidor {
 			sai.setLength(msg.length);
 			try {
 				socket.send(sai);
-				System.out.println("Enviou mensagem para port: " + sai.getPort());
+				System.out.println("Enviou mensagem para port: " + sai.getPort() + "\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public static void enviarMensagemIndividual(byte[] msg, DatagramPacket dgSaida, DatagramSocket socket) {
+	public static void enviarMensagemIndividual(byte[] msg, DatagramPacket dgEntrada, DatagramSocket socket) {
 
-		dgSaida.setData(msg);
-		dgSaida.setLength(msg.length);
+		dgEntrada.setData(msg);
+		dgEntrada.setLength(msg.length);
 		try {
-			socket.send(dgSaida);
-			System.out.println("Enviou mensagem para port: " + dgSaida.getPort());
+			socket.send(dgEntrada);
+			System.out.println("Enviou mensagem para port: " + dgEntrada.getPort() + "\n");
 		} catch (IOException e) { 
 			e.printStackTrace(); 
 		}
