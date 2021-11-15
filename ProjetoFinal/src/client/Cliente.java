@@ -10,6 +10,9 @@ ENVIAR PALPITE PARA O SERVIDOR (OK)
 RETIRAR UM PALITO 
 ESCUTAR APENAS MENSAGENS DO SERVIDOR (OK)
 
+REFINAMENTOS:
+DEIXAR APENAS OS SYSTEM OUTS NECESSÁRIOS
+
  */
 
 public class Cliente extends Thread {
@@ -20,8 +23,6 @@ public class Cliente extends Thread {
 	String mensagem;
 	String nomeCliente;
 	String host;
-	
-	String qtdPalitos = "3";
 	
 	byte[] saida=new byte[1000], entrada=new byte[1000];  
 	
@@ -59,7 +60,7 @@ public class Cliente extends Thread {
 				System.out.println("Enviou nome do cliente: " + clientName);
 				
 				//ADICIONADO PARA AVISAR QUANDO ENTRA NO BATE PAPO
-				//TAMB�M ENVIA UM PACKET PARA O CLIENTE
+				//TAMBÉM ENVIA UM PACKET PARA O CLIENTE
 				this.enviarMensagem("Entrei"); 
 			
 			} catch (IOException e) { 
