@@ -14,6 +14,12 @@ SABE QUANTOS PALITOS O PARTICIPANTE COLOCOU NA RODADA (OK)
 VERIFICAR SE ALGUM PARTICIPANTE ACERTOU (OK)
 
 ENVIAR A RESPOSTA NO CHAT (OK)
+
+REFINAMENTOS:
+
+- ARRUMAR OS SYSTEM OUT DA CLASSE PARA APARECER APENAS O NECESS√ÅRIO
+- MELHORAR MENSAGENS DE INICIO DO JOGOS, INICIO DE NOVA RODADA, FINAL DO JOGO, ETC
+- CRIAR FUNCOES PARA DEIXAR O C√ìDIGO MAIS ORGANIZADO
  */
 public class Servidor {
 
@@ -46,14 +52,14 @@ public class Servidor {
 				if (mensagem.equals("CONECTA")) {
 
 					//ENVIA MENSAGEM "OK" DE SAIDA PARA O CLIENTE QUE SE CONECTOU
-					System.out.println("Conex„o com cliente "+  dgEntrada.getAddress().getHostAddress() +":"+ 
+					System.out.println("Conex√£o com cliente "+  dgEntrada.getAddress().getHostAddress() +":"+ 
 							dgEntrada.getPort());
 					saida = "OK#".getBytes();
 					DatagramPacket x = new DatagramPacket(saida,  saida.length, dgEntrada.getAddress(), 
 							dgEntrada.getPort());
 					Servidor.enviarMensagemIndividual(saida, x, socket);
 
-					//ADICIONA O PACOTE DE SAÕDA QUE FOI ENVIADO PARA O CLIENTE EM UM ARRAY
+					//ADICIONA O PACOTE DE SA√çDA QUE FOI ENVIADO PARA O CLIENTE EM UM ARRAY
 					saidas.add(x);
 
 					//ADICIONA O QTD DE PALITOS INICIAIS NO VETOR
@@ -70,7 +76,7 @@ public class Servidor {
 				} else {
 					boolean isStart = false;
 
-					//CONFERE SE ALGUM CLIENTE MANDOU A MENSAGEM "START" PARA COME«AR O JOGO
+					//CONFERE SE ALGUM CLIENTE MANDOU A MENSAGEM "START" PARA COME√áAR O JOGO
 					for(String name : nomeCliente) {
 						if(mensagem.equals(new String(name + ":START"))) {
 
@@ -79,7 +85,7 @@ public class Servidor {
 							saida = mensagem.getBytes();
 							Servidor.enviarMensagemTodos(saida, saidas, socket);
 
-							mensagem = new String("Vamos comeÁar#");
+							mensagem = new String("Vamos come√ßar#");
 							saida = mensagem.getBytes();
 							System.out.println("START GAME");
 							isStart = true;
@@ -92,13 +98,15 @@ public class Servidor {
 						Servidor.enviarMensagemTodos(saida, saidas, socket);
 						System.out.println("Mensagem -> " + mensagem + "... enviada");
 						boolean verificaVencedor = false;
-						/*CONTINUA DESENVOLVIMENTO DO GAME... COME«O DO JOGO AQUI...
-						AQUI COME«A A RODADA
+
+						/*CONTINUA DESENVOLVIMENTO DO GAME... COME√áO DO JOGO AQUI...
+						AQUI COME√áA A RODADA
 						..........................................................*/
+
 						do {
 							int i=0;
 
-							//FOR PARA RECEBER OS PALITOS QUE CADA UM COLOCAR¡
+							//FOR PARA RECEBER OS PALITOS QUE CADA UM COLOCAR√Å
 							for(DatagramPacket sai : saidas) {
 
 								//ENVIA MENSAGEM PARA TODOS
@@ -205,34 +213,24 @@ public class Servidor {
 
 								}
 							}
-							//SE N√O, ENVIA MENSAGEM DE QUE NINGUEM ACERTOU E COME«A UMA NOVA RODADA
+							//SE N√ÉO, ENVIA MENSAGEM DE QUE NINGUEM ACERTOU E COME√áA UMA NOVA RODADA
 							if(!verificaAcerto) {
 								mensagem = ("Nenhum jogador acertou, iniciando nova rodada...#");
 								saida = mensagem.getBytes();
 								Servidor.enviarMensagemTodos(saida, saidas, socket);
 							}
-							
+
 							qtdPalitosnaMao.removeAll(qtdPalitosnaMao);
 							palpites.removeAll(palpites);
-							
+
 						}while(!verificaVencedor);
 
 
-						//SE N√O TIVER RECEBIDO O START, APENAS ENVIA A MENSAGEM RECEBIDA PARA TODOS
+						//SE N√ÉO TIVER RECEBIDO O START, APENAS ENVIA A MENSAGEM RECEBIDA PARA TODOS
 					}else {
 						mensagem = new String (mensagem + "#");
 						saida = mensagem.getBytes();
 						Servidor.enviarMensagemTodos(saida, saidas, socket);
-						//						for(DatagramPacket sai : saidas) {
-						//							//if(sai.getPort() == dgEntrada.getPort()) { ESSE IF FAZ COM QUE O SERVIDOR S”
-						//							//RESPONDA O ⁄LTIMO CLIENTE QUE MANDOU MENSAGEM
-						//							sai.setData(saida);
-						//							sai.setLength(saida.length);
-						//							System.out.println("Envio de MENSAGEM: "+ mensagem+" "+sai.getAddress()+" "+ 
-						//									sai.getPort());
-						//							socket.send(sai); 
-						//							//}
-						//}
 					}
 				}
 			}
@@ -243,9 +241,6 @@ public class Servidor {
 	}
 
 	public static void enviarMensagemTodos(byte[] msg, List<DatagramPacket> saidas, DatagramSocket socket) {
-		//String texto = ("Server: " + msg + "#");
-		//byte[] saida = texto.getBytes();
-
 
 		for(DatagramPacket sai : saidas) {
 			sai.setData(msg);
@@ -260,8 +255,6 @@ public class Servidor {
 	}
 
 	public static void enviarMensagemIndividual(byte[] msg, DatagramPacket dgSaida, DatagramSocket socket) {
-		//String texto = ("Server: " + msg + "#");
-		//byte[] saida = texto.getBytes();
 
 		dgSaida.setData(msg);
 		dgSaida.setLength(msg.length);
