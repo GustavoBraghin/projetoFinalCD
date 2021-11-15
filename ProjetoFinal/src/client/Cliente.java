@@ -4,16 +4,10 @@ import java.net.*;
 import java.io.*;
 
 /*
-OBJETIVOS DO CLIENTE
-ENVIAR QTD PALITOS PARA SERVIDOR 
-ENVIAR PALPITE PARA O SERVIDOR (OK)
-RETIRAR UM PALITO 
-ESCUTAR APENAS MENSAGENS DO SERVIDOR (OK)
-
-REFINAMENTOS:
-DEIXAR APENAS OS SYSTEM OUTS NECESSÁRIOS
-
- */
+ALUNOS:
+GUSTAVO DA SILVA BRAGHIN
+GIOVANA PINHO DE SOUZA
+*/
 
 public class Cliente extends Thread {
 	Tela tela;
@@ -76,7 +70,7 @@ public class Cliente extends Thread {
 			  			do {
 							socket.receive(dgEntrada);
 							mensagem = (new String(entrada)).trim().split("#")[0];
-							System.out.println("Recebeu -> " + mensagem);
+							System.out.println("Recebeu -> " + mensagem + "\n");
 							tela.adicionarMensagem(mensagem);
 						} while (!mensagem.equals("CMD|DESCONECTAR"));  
 					
